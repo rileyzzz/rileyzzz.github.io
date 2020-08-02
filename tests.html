@@ -67,9 +67,29 @@
 			</footer>
 		</div>
 
-		<script src="js/three.js"></script>
+		<script id="vertexShader" type="x-shader/x-vertex">
+			varying vec3 vUv;
+
+			void main() {
+			vUv = position;
+
+			vec4 modelViewPosition = modelViewMatrix * vec4(position, 1.0);
+			gl_Position = projectionMatrix * modelViewPosition;
+			}
+		</script>
+
+		<script id="fragmentShader" type="x-shader/x-fragment">
+			uniform vec3 colorA;
+			uniform vec3 colorB;
+			varying vec3 vUv;
+
+			void main() {
+			gl_FragColor = vec4(mix(colorA, colorB, vUv.z), 1.0);
+			}
+		</script>
 
 		<script src="js/buffer-loader.js"></script>
-		<script src="js/glbusiness.js"></script>
+		<script src="js/three.js"></script>
+		<script src="js/glbusiness.js" type="module"></script>
 	</body>
 </html>
