@@ -66,6 +66,7 @@
 				</div>
 			</footer>
 		</div>
+		<script src="js/three.js"></script>
 
 		<script id="vertexShader" type="x-shader/x-vertex">
 			varying vec3 vUv;
@@ -82,14 +83,17 @@
 			uniform vec3 colorA;
 			uniform vec3 colorB;
 			varying vec3 vUv;
+			uniform sampler2D soundTex;
 
 			void main() {
-			gl_FragColor = vec4(mix(colorA, colorB, vUv.z), 1.0);
+			//gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+			gl_FragColor = vec4(texture2D(soundTex, vUv.xz).r, texture2D(soundTex, vUv.xz).r, texture2D(soundTex, vUv.xz).r, 1.0);
+			//gl_FragColor = vec4(mix(colorA, colorB, vUv.x), 1.0);
 			}
 		</script>
 
 		<script src="js/buffer-loader.js"></script>
-		<script src="js/three.js"></script>
+
 		<script src="js/glbusiness.js" type="module"></script>
 	</body>
 </html>
