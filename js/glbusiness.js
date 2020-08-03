@@ -11,6 +11,37 @@ var params = {
 	bloomThreshold: 0.0,
 	bloomRadius: 0.4
 };
+var MOUSEX, MOUSEY = 0;
+//mouse handling, thank you stackoverflow
+(function () {
+	document.onmousemove = handleMouseMove;
+	function handleMouseMove(event) {
+		var eventDoc, doc, body;
+
+		event = event || window.event; // IE-ism
+
+		// If pageX/Y aren't available and clientX/Y are,
+		// calculate pageX/Y - logic taken from jQuery.
+		// (This is to support old IE)
+		if (event.pageX == null && event.clientX != null) {
+			eventDoc = (event.target && event.target.ownerDocument) || document;
+			doc = eventDoc.documentElement;
+			body = eventDoc.body;
+
+			event.pageX = event.clientX +
+				(doc && doc.scrollLeft || body && body.scrollLeft || 0) -
+				(doc && doc.clientLeft || body && body.clientLeft || 0);
+			event.pageY = event.clientY +
+				(doc && doc.scrollTop || body && body.scrollTop || 0) -
+				(doc && doc.clientTop || body && body.clientTop || 0);
+		}
+
+		// Use event.pageX / event.pageY here
+		MOUSEX = event.pageX;
+		MOUSEY = event.pageY;
+	}
+})();
+
 
 document.addEventListener('click', musicPlay);
 document.addEventListener('touchstart', musicPlay);
@@ -21,7 +52,7 @@ var bufferLength;
 var dataArray;
 var timeArray;
 dataArray = new Uint8Array(1024);
-timeArray = new Uint8Array(1024);
+timeArray = new Uint8Array(2048);
 //dataArray.fill(255);
 var dTex;
 var d2Tex;
@@ -31,7 +62,8 @@ function init() {
 	window.AudioContext = window.AudioContext || window.webkitAudioContext;
 	context = new AudioContext();
 	analyser = context.createAnalyser();
-	analyser.fftSize = 2048;
+	//analyser.fftSize = 2048;
+	analyser.fftSize = 4096; // increase size so i dont have to uv transform
 	bufferLength = analyser.frequencyBinCount;
 	
 
@@ -39,7 +71,7 @@ function init() {
 	bufferLoader = new BufferLoader(
 		context,
 		[
-			'bruh5.mp3',
+			'bruh3.mp3',
 			//'../sounds/hyper-reality/laughter.wav',
 		],
 		finishedLoading
@@ -225,13 +257,16 @@ var animate = function () {
 			//let elapsedmusicMilliseconds = Date.now() - (musicStartTime + 500.0);
 			//let RotationBPM = elapsedmusicMilliseconds % ((BPM / 60.0) * 1000.0);
 
+			let NewX = MOUSEX - (window.innerWidth / 2);
+			let NewY = MOUSEY - (window.innerHeight / 2);
+
 			for (let i = 0; i < spinningstuff.length; i++) {
 
 				let corescale = (i + 1) / 8;
 				
 
 
-				let TargetPosition = Math.floor((i / spinningstuff.length) * 1024);
+				let TargetPosition = Math.floor((i / spinningstuff.length) * 2048);
 				let TargetRotation = (timeArray[TargetPosition] - 127) / 250;
 
 				//if (Math.abs(TargetRotation) > 0.08) spinningstuff[i].rotation.x += TargetRotation * 1.4;
@@ -250,8 +285,16 @@ var animate = function () {
 				//	let NewScale = corescale + (RelativeScale / 1.01);
 				//	spinningstuff[i].scale.set(NewScale, NewScale, NewScale);
 				//}
-				
-				
+				//spinningstuff[i].lookAt(NewX / 2000.0, -0.3, -NewY / 2000.0);
+				//spinningstuff[i].position.set(0.0, TargetRotation - 0.4, 0.0);
+
+				//spinningstuff[i].rotation.x = (Math.PI / 2);
+				//let RotationFactor = ((spinningstuff.length - i) / spinningstuff.length) / 2 + 0.5;
+				spinningstuff[i].rotation.set(0.0, spinningstuff[i].rotation.y, 0.0);
+				let RotationFactor = ((spinningstuff.length - i) / spinningstuff.length);
+				spinningstuff[i].rotation.z = (-NewX / 2000.0) * RotationFactor;
+				spinningstuff[i].rotation.x = (NewY / 2000.0) * RotationFactor;
+
 
 				spinningstuff[i].rotation.y += TargetRotation / 8.0;
 				//spinningstuff[i].rotation.y += (RotationBPM / 1000.0) / 100.0;
@@ -270,7 +313,10 @@ var animate = function () {
 		
 		//grid.rotation.x += 0.01;
 		grid.rotation.y += 0.001;
+
 		
+
+		//grid.position.set(NewX / 2000.0, -4.0, NewY / 2000.0);
 	}
 	//renderer.render(scene, camera);
 	composer.render(scene, camera);

@@ -44,7 +44,7 @@
 
 			<header class="masthead mb-auto">
 				<div class="inner">
-					<h3 class="masthead-brand">Cover</h3>
+					<h3 class="masthead-brand">rileyzzz</h3>
 					<nav class="nav nav-masthead justify-content-center">
 						<a class="nav-link active" href="#">Home</a>
 						<a class="nav-link" href="#">Projects</a>
@@ -73,12 +73,20 @@
 			varying vec2 vUv;
 			uniform sampler2D soundTex;
 			uniform float time;
+			float border(float infloat, float size)
+			{
+			return (infloat * ( 1.0 - (size * 2.0))) + size;
+			}
+
 			void main() {
-			vUv = vec2(uv.x, uv.y / 2.0);
+			//vUv = vec2(uv.x, uv.y / 2.0);
+			//float bordersize = 0.4;
+			//vUv = vec2(border(uv.x, bordersize), border(uv.y, bordersize));
+			vUv = vec2(uv.x / 1.5, uv.y / 1.5);
 			vec3 newPosition = position;
 			//newPosition.y = texture2D(soundTex, vUv).r  - 2.0;
 
-			vec2 Center = vUv - vec2(0.5, 0.5);
+			vec2 Center = vUv - vec2(0.5, 0.5 / 1.5);
 			float CenterDist = sqrt(Center.x * Center.x + Center.y * Center.y);
 
 			//newPosition.y = texture2D(soundTex, vec2(CenterDist, CenterDist)).r + 0.0;
