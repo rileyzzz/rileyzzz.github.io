@@ -103,6 +103,7 @@ loader.load('assets/3d/grid.glb', function (gltf) {
 	//gltf.material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
 	//grid = gltf.scene;
 	dTex = new THREE.DataTexture(dataArray, 32, 32, THREE.RedFormat);
+	dTex.wrapS = dTex.wrapT = THREE.RepeatWrapping;
 
 	let uniforms = {
 		colorB: { type: 'vec3', value: new THREE.Color(0xACB6E5) },
@@ -149,10 +150,11 @@ var animate = function () {
 	if (grid) {
 
 		if (analyser) {
-			dataArray.fill((Math.sin(frame/50) / 2 + 1) * 255);
-			//analyser.getByteTimeDomainData(dataArray);
+			//dataArray.fill((Math.sin(frame/50) / 2 + 1) * 255);
+			dataArray.fill(0);
+			analyser.getByteTimeDomainData(dataArray);
 
-			GridMaterial.uniforms.soundTex.value = dataArray;
+			dTex.needsUpdate = true;
 			GridMaterial.uniforms.soundTex.needsUpdate = true;
 
 		}
