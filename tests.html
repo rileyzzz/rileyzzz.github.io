@@ -36,6 +36,7 @@
 
 	</head>
 	<body class="text-center">
+
 		<canvas id="glCanvas" class="themgraphics"></canvas>
 
 		<!--<p>paragraphs amirite</p>-->
@@ -73,7 +74,7 @@
 			uniform sampler2D soundTex;
 			uniform float time;
 			void main() {
-			vUv = uv;
+			vUv = vec2(uv.x, uv.y / 2.0);
 			vec3 newPosition = position;
 			//newPosition.y = texture2D(soundTex, vUv).r  - 2.0;
 
@@ -125,8 +126,10 @@
 
 			void main() {
 			//gl_FragColor = vec4(mix(colorA, colorB, vUv.x), 1.0);
-			float TargColor = (sin(vUv.x * 10.0) / 2.0 + 0.5);
-			gl_FragColor = vec4(TargColor, TargColor, TargColor, 1.0);
+			//float TargColor = (sin(vUv.x * 40.0) / 2.0 + 0.5);
+			float TargColor = vUv.x;
+			//gl_FragColor = vec4(TargColor, TargColor, TargColor, 1.0);
+			gl_FragColor = vec4(mix(colorA, colorB, TargColor), 1.0); //abs(vUv.x - 1.0)
 			}
 		</script>
 
