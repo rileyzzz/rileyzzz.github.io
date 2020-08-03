@@ -25,40 +25,6 @@ timeArray = new Uint8Array(1024);
 var dTex;
 var d2Tex;
 
-//function FractionData() {
-//	for (var i = 0; i < size; i++) {
-
-//		data[i] /= 256;
-
-//	}
-//}
-//var GLCanvas = document.getElementById("glCanvas");
-//var GLContext = GLCanvas.getContext('webgl2', { antialias: true });
-
-
-//pixel setup
-//function setPixelFromInt(pixels, width, x, y, intValue) {
-//	var r = (intValue >> 24) & 0xFF;
-//	var g = (intValue >> 16) & 0xFF;
-//	var b = (intValue >> 8) & 0xFF;
-//	var a = (intValue >> 0) & 0xFF;
-//	var offset = (y * width + x) * 4;
-//	pixels[offset + 0] = r;
-//	pixels[offset + 1] = g;
-//	pixels[offset + 2] = b;
-//	pixels[offset + 3] = a;
-//}
-//var DataPixels = new Uint8Array(32 * 32 * 4);
-
-//function SetPixelBuffer(data) {
-//	var i;
-//	for (i = 0; i < 32 * 32; i++)
-//	{
-//		setPixelFromInt(pixels, width, x, y, intValue);
-//    }
-//}
-
-
 function init() {
 	// Fix up prefixing
 	window.AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -232,7 +198,7 @@ function onWindowResize() {
 }
 
 
-var BPM = 110.0;
+//var BPM = 110.8 / 4.0;
 var frame = 0;
 var startTime = Date.now();
 var animate = function () {
@@ -254,8 +220,8 @@ var animate = function () {
 			dTex.needsUpdate = true;
 			GridMaterial.uniforms.soundTex.needsUpdate = true;
 
-			let elapsedmusicMilliseconds = Date.now() - (musicStartTime + 500.0);
-			let RotationBPM = elapsedmusicMilliseconds % ((BPM / 60.0) * 1000.0);
+			//let elapsedmusicMilliseconds = Date.now() - (musicStartTime + 500.0);
+			//let RotationBPM = elapsedmusicMilliseconds % ((BPM / 60.0) * 1000.0);
 
 			for (let i = 0; i < spinningstuff.length; i++) {
 
@@ -285,8 +251,8 @@ var animate = function () {
 				
 				
 
-				//spinningstuff[i].rotation.y += TargetRotation / 8.0;
-				spinningstuff[i].rotation.y += (RotationBPM / 1000.0) / 100.0;
+				spinningstuff[i].rotation.y += TargetRotation / 8.0;
+				//spinningstuff[i].rotation.y += (RotationBPM / 1000.0) / 100.0;
 				//spinningstuff[i].rotation.y += i / 1800;
 				//spinningstuff[i].rotation.x = i * (Math.sin(elapsedMilliseconds / 1000) / 32);
             }
