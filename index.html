@@ -46,9 +46,10 @@
 				<div class="inner">
 					<h3 class="masthead-brand">rileyzzz</h3>
 					<nav class="nav nav-masthead justify-content-center">
-						<a class="nav-link active" href="#">Home</a>
-						<a class="nav-link" href="#">Projects</a>
-						<a class="nav-link" href="#">Contact</a>
+						<a class="nav-link active" href="#home">Home</a>
+						<!--<a class="nav-link" href="#projects" data-toggle="collapse" data-target="#ProjectContent" aria-controls="ProjectContent" aria-expanded="false">Projects</a>-->
+						<a class="nav-link" href="#projects">Projects</a>
+						<a class="nav-link" href="#contact">Contact</a>
 					</nav>
 				</div>
 			</header>
@@ -56,6 +57,7 @@
 			<main role="main" class="inner cover">
 				<h1 class="cover-heading">rileyzzz</h1>
 				<p class="lead">i make cool stuff</p>
+
 				<!--<p class="lead">
 				<a href="#" class="btn btn-lg btn-secondary">Learn more</a>
 			</p>-->
@@ -63,10 +65,50 @@
 
 			<footer class="mastfoot mt-auto">
 				<div class="inner">
-
+					<p>
+						rendered using three.js
+					</p>
 				</div>
 			</footer>
 		</div>
+
+		<div class="information-container" id="ProjectContent">
+			<div class="infocontent">
+				<div class="bg-dark p-4">
+					<h4 class="text-white">project content</h4>
+					<span class="text-muted">Toggleable via the navbar brand.</span>
+				</div>
+			</div>
+		</div>
+
+		<div class="information-container" id="ContactContent">
+			<div class="infocontent">
+				<div class="bg-dark p-4">
+					<h4 class="text-white">contact content</h4>
+					<span class="text-muted">Toggleable via the navbar brand.</span>
+				</div>
+			</div>
+		</div>
+		
+
+
+		<script>
+			window.onhashchange = function () {
+				if (location.hash === "#home") {
+					document.getElementById("ProjectContent").style.height = "0%";
+					document.getElementById("ContactContent").style.height = "0%";
+				}
+				if (location.hash === "#projects") {
+					document.getElementById("ProjectContent").style.height = "90%";
+					document.getElementById("ContactContent").style.height = "0%";
+				}
+				if (location.hash === "#contact") {
+					document.getElementById("ProjectContent").style.height = "0%";
+					document.getElementById("ContactContent").style.height = "90%";
+				}
+			};
+		</script>
+
 		<script src="js/three.js"></script>
 
 		<script id="vertexShader" type="x-shader/x-vertex">
@@ -82,17 +124,21 @@
 			//vUv = vec2(uv.x, uv.y / 2.0);
 			//float bordersize = 0.4;
 			//vUv = vec2(border(uv.x, bordersize), border(uv.y, bordersize));
-			vUv = vec2(uv.x / 1.5, uv.y / 1.5);
-			vec3 newPosition = position;
-			//newPosition.y = texture2D(soundTex, vUv).r  - 2.0;
 
-			vec2 Center = vUv - vec2(0.5, 0.5 / 1.5);
+
+			//vUv = vec2(uv.x, (-abs(uv.y - 0.5) + 0.5) * 2.0);
+
+			//vUv = vec2(uv.x, abs(uv.y - 0.5) * 2.0);
+			vUv = vec2(uv.x, abs(uv.y - 0.5) + 0.04);
+
+
+			vec3 newPosition = position;
+
+			vec2 Center = vUv - vec2(0.5, 0.5);
 			float CenterDist = sqrt(Center.x * Center.x + Center.y * Center.y);
 
-			//newPosition.y = texture2D(soundTex, vec2(CenterDist, CenterDist)).r + 0.0;
 			float soundVal = texture2D(soundTex, vec2(0.5, 0.5)).r;
-
-			newPosition.y += sin(time + CenterDist * 20.0 + (soundVal * 2.0)) / 8.0;
+			newPosition.y += sin(time + CenterDist * 20.0 + (soundVal * 2.0)) / 16.0;
 
 			newPosition.y += texture2D(soundTex, vUv).r;
 

@@ -62,8 +62,8 @@ function init() {
 	window.AudioContext = window.AudioContext || window.webkitAudioContext;
 	context = new AudioContext();
 	analyser = context.createAnalyser();
-	//analyser.fftSize = 2048;
-	analyser.fftSize = 4096; // increase size so i dont have to uv transform
+	analyser.fftSize = 2048;
+	//analyser.fftSize = 4096; // increase size so i dont have to uv transform
 	bufferLength = analyser.frequencyBinCount;
 	
 
@@ -71,7 +71,7 @@ function init() {
 	bufferLoader = new BufferLoader(
 		context,
 		[
-			'bruh3.mp3',
+			'bruh.mp3',
 			//'../sounds/hyper-reality/laughter.wav',
 		],
 		finishedLoading
