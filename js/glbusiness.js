@@ -13,6 +13,7 @@ var params = {
 };
 
 document.addEventListener('click', musicPlay);
+document.addEventListener('touchstart', musicPlay);
 var context;
 var bufferLoader;
 var analyser;
@@ -58,6 +59,7 @@ function finishedLoading(bufferList) {
 var musicStartTime;
 function musicPlay() {
 	document.removeEventListener('click', musicPlay);
+	document.removeEventListener('touchstart', musicPlay);
 	init();
 	musicStartTime = Date.now();
 };
