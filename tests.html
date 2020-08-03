@@ -69,12 +69,25 @@
 		<script src="js/three.js"></script>
 
 		<script id="vertexShader" type="x-shader/x-vertex">
-			varying vec3 vUv;
-
+			varying vec2 vUv;
+			uniform sampler2D soundTex;
+			uniform float time;
 			void main() {
-			vUv = position;
+			vUv = uv;
+			vec3 newPosition = position;
+			//newPosition.y = texture2D(soundTex, vUv).r  - 2.0;
 
-			vec4 modelViewPosition = modelViewMatrix * vec4(position, 1.0);
+			vec2 Center = vUv - vec2(0.5, 0.5);
+			float CenterDist = sqrt(Center.x * Center.x + Center.y * Center.y);
+
+			//newPosition.y = texture2D(soundTex, vec2(CenterDist, CenterDist)).r + 0.0;
+			float soundVal = texture2D(soundTex, vec2(0.5, 0.5)).r;
+
+			newPosition.y += sin(time + CenterDist * 20.0 + (soundVal * 2.0)) / 8.0;
+
+			newPosition.y += texture2D(soundTex, vUv).r;
+
+			vec4 modelViewPosition = modelViewMatrix * vec4(newPosition, 1.0);
 			gl_Position = projectionMatrix * modelViewPosition;
 			}
 		</script>
@@ -82,13 +95,38 @@
 		<script id="fragmentShader" type="x-shader/x-fragment">
 			uniform vec3 colorA;
 			uniform vec3 colorB;
-			varying vec3 vUv;
+			varying vec2 vUv;
 			uniform sampler2D soundTex;
 
 			void main() {
 			//gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
-			gl_FragColor = vec4(texture2D(soundTex, vUv.xz).r, texture2D(soundTex, vUv.xz).r, texture2D(soundTex, vUv.xz).r, 1.0);
+			float soundval = ((texture2D(soundTex, vUv).r - 0.5) * 15.0) + 0.5;
+			//gl_FragColor = vec4(soundval, soundval, soundval, 1.0);
+			gl_FragColor = vec4(mix(colorA, colorB, soundval), 1.0);
+			}
+		</script>
+
+		<script id="spinvertShader" type="x-shader/x-vertex">
+			varying vec2 vUv;
+
+			void main() {
+			//vUv = position;
+			vUv = uv;
+
+			vec4 modelViewPosition = modelViewMatrix * vec4(position, 1.0);
+			gl_Position = projectionMatrix * modelViewPosition;
+			}
+		</script>
+
+		<script id="spinfragShader" type="x-shader/x-fragment">
+			uniform vec3 colorA;
+			uniform vec3 colorB;
+			varying vec2 vUv;
+
+			void main() {
 			//gl_FragColor = vec4(mix(colorA, colorB, vUv.x), 1.0);
+			float TargColor = (sin(vUv.x * 10.0) / 2.0 + 0.5);
+			gl_FragColor = vec4(TargColor, TargColor, TargColor, 1.0);
 			}
 		</script>
 

@@ -85,29 +85,30 @@ var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
 var renderer = new THREE.WebGLRenderer({ canvas: glCanvas });
-//var renderer = new THREE.WebGLRenderer({ GLCanvas, GLContext });
 
-var geometry = new THREE.BoxGeometry();
-var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-var cube = new THREE.Mesh(geometry, material);
+//var geometry = new THREE.BoxGeometry();
+//var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+//var cube = new THREE.Mesh(geometry, material);
 var grid;
 var GridMaterial;
-scene.add(cube);
+var spinningstuff = new Array();
+//scene.add(cube);
 
 camera.position.y = 5;
 camera.lookAt(0, 0, 0);
 var loader = new GLTFLoader();
 
+
+
 loader.load('assets/3d/grid.glb', function (gltf) {
 
-	//gltf.material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-	//grid = gltf.scene;
 	dTex = new THREE.DataTexture(dataArray, 32, 32, THREE.RedFormat);
 	dTex.wrapS = dTex.wrapT = THREE.RepeatWrapping;
 
 	let uniforms = {
-		colorB: { type: 'vec3', value: new THREE.Color(0xACB6E5) },
-		colorA: { type: 'vec3', value: new THREE.Color(0x74ebd5) },
+		colorB: { type: 'vec3', value: new THREE.Color(0xb967ff) },
+		colorA: { type: 'vec3', value: new THREE.Color(0xfaa80f) },
+		time: { type: 'float', value: 1.0 },
 		soundTex: { type: 't', value: dTex }
 	}
 	GridMaterial = new THREE.ShaderMaterial({
@@ -123,15 +124,58 @@ loader.load('assets/3d/grid.glb', function (gltf) {
 	});
 
 	grid = gltf.scene;
-	//grid = new THREE.Mesh(gltf.scene.geometry, GridMaterial);
-	scene.add(grid);
-	//grid.rotation.x = Math.PI / 2;
 
+	grid.position.set(0.0, -4.0, 0.0);
+	let scale = 3.0;
+	grid.scale.set(scale, scale, scale);
+
+	scene.add(grid);
 }, undefined, function (error) {
 
 	console.error(error);
 
 });
+
+
+loader.load('assets/3d/spin.glb', function (gltf) {
+
+	let uniforms = {
+		colorB: { type: 'vec3', value: new THREE.Color(0xACB6E5) },
+		colorA: { type: 'vec3', value: new THREE.Color(0x74ebd5) }
+	}
+	var SpinMaterial = new THREE.ShaderMaterial({
+		uniforms: uniforms,
+		side: THREE.DoubleSide,
+		vertexShader: document.getElementById('spinvertShader').textContent,
+		fragmentShader: document.getElementById('spinfragShader').textContent
+	});
+
+	gltf.scene.traverse(function (child) {
+		if (child.isMesh) {
+			child.material = SpinMaterial;
+		}
+	});
+
+	gltf.scene.position.set(0.0, -0.4, 0.0);
+
+	for (let SpinID = 1; SpinID < 8; SpinID++) {
+		let curspinner = gltf.scene.clone();
+
+		let scale = SpinID / 6;
+		curspinner.scale.set(scale, scale, scale);
+
+		spinningstuff.push(curspinner);
+		scene.add(spinningstuff[spinningstuff.length - 1]);
+	}
+
+}, undefined, function (error) {
+	console.error(error);
+});
+
+
+
+
+
 
 window.addEventListener('resize', onWindowResize, false);
 function onWindowResize() {
@@ -142,28 +186,46 @@ function onWindowResize() {
 	renderer.setSize(window.innerWidth, window.innerHeight);
 
 }
-var frame = 0;
 
+var frame = 0;
+var startTime = Date.now();
 var animate = function () {
 	requestAnimationFrame(animate);
 	frame++;
 	if (grid) {
+
+		var elapsedMilliseconds = Date.now() - startTime;
+		GridMaterial.uniforms.time.value = (elapsedMilliseconds / 1000.0);
+		GridMaterial.uniforms.time.needsUpdate = true;
 
 		if (analyser) {
 			//dataArray.fill((Math.sin(frame/50) / 2 + 1) * 255);
 			dataArray.fill(0);
 			analyser.getByteTimeDomainData(dataArray);
 
+
+
 			dTex.needsUpdate = true;
 			GridMaterial.uniforms.soundTex.needsUpdate = true;
+
+
+			for (let i = 0; i < spinningstuff.length; i++) {
+				let TargetPosition = Math.floor((i / spinningstuff.length) * 1024);
+				let TargetRotation = (dataArray[TargetPosition] - 127) / 250;
+				spinningstuff[i].rotation.x += TargetRotation;
+            }
+
+			//cube.rotation.y += (dataArray[512] - 127) / 250;
+			
 
 		}
 
 
 		//cube.rotation.x += 0.01;
-		cube.rotation.y += 0.01;
+		//cube.rotation.y += 0.01;
+		
 		//grid.rotation.x += 0.01;
-		grid.rotation.y += 0.01;
+		grid.rotation.y += 0.002;
 		
 	}
 	renderer.render(scene, camera);
