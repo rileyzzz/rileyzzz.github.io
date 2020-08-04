@@ -46,10 +46,10 @@ function StartPreviews() {
 		//renderer.toneMapping = THREE.ACESFilmicToneMapping;
 		renderer.toneMappingExposure = 1;
 		renderer.outputEncoding = THREE.sRGBEncoding;
-		var pmremGenerator = new THREE.PMREMGenerator(renderer);
+		let pmremGenerator = new THREE.PMREMGenerator(renderer);
 		pmremGenerator.compileEquirectangularShader();
 
-		var envMap = pmremGenerator.fromEquirectangular(ENVMAP).texture;
+		let envMap = pmremGenerator.fromEquirectangular(ENVMAP).texture;
 
 		scene.environment = envMap;
 
@@ -99,23 +99,18 @@ function StartPreviews() {
 		});
 
 
-
-
 		let onPreviewResize = function () {
 
 			camera.aspect = obj.offsetWidth / obj.offsetHeight;
 			camera.updateProjectionMatrix();
 
-			renderer.setSize(obj.offsetWidth, obj.offsetHeight);
-			//ssaoPass.setSize(obj.offsetWidth, obj.offsetHeight);
-			//composer.setSize(obj.offsetWidth, obj.offsetHeight);
+			renderer.setSize(obj.offsetWidth, obj.offsetHeight, false);
 
 		}
 		window.addEventListener('resize', onPreviewResize, false);
 
 		let startTime = Date.now();
 		let animate = function () {
-			requestAnimationFrame(animate);
 
 			if (previewmodel) {
 
@@ -126,6 +121,8 @@ function StartPreviews() {
 				previewmodel.rotation.y = Math.sin(elapsedMilliseconds / 2000.0) / 10.0;
 			}
 			renderer.render(scene, camera);
+
+			requestAnimationFrame(animate);
 		};
 
 

@@ -71,7 +71,7 @@ function init() {
 	bufferLoader = new BufferLoader(
 		context,
 		[
-			'bruh2.mp3',
+			'bruh.mp3',
 			//'../sounds/hyper-reality/laughter.wav',
 		],
 		finishedLoading
@@ -242,12 +242,15 @@ var animate = function () {
 	frame++;
 	var elapsedMilliseconds = Date.now() - startTime;
 
+	if (SpinMaterial) {
+		SpinMaterial.uniforms.time.value = (elapsedMilliseconds / 1000.0);
+		SpinMaterial.uniforms.time.needsUpdate = true;
+    }
 
 	if (grid) {
 		GridMaterial.uniforms.time.value = (elapsedMilliseconds / 1000.0);
 		GridMaterial.uniforms.time.needsUpdate = true;
-		SpinMaterial.uniforms.time.value = (elapsedMilliseconds / 1000.0);
-		SpinMaterial.uniforms.time.needsUpdate = true;
+		
 
 		if (analyser) {
 			//dataArray.fill((Math.sin(frame/50) / 2 + 1) * 255);

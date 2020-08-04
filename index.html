@@ -79,44 +79,79 @@
 				<!--<div class="infosubcontent">-->
 
 				<div class="card bg-dark text-white text-left infocard">
-					<img class="card-img infoimage" src="images/nodes.png">
+					<img class="card-img infoimagecover" src="images/nodes.png">
 					<!--<canvas id="CCS" class="previewgraphics"></canvas>-->
-					<div class="card-img-overlay cardstuff">
-						<h4 class="card-title">Node Backend</h4>
-						<p class="card-text">
-							A flexible node editing system I created around April 2020. Includes a demo application that utilizes SDL2 to handle rendering of nodes and editing of control flow, but otherwise uses entirely standard libraries. Designed to permit easy creation of nodes using either custom functions or std functions directly through some fancy templated function wizardry.
-							This project was my first attempt at a large project in C++, so it wasn't set up to compile into a .lib or .dll, however it could easily be modified to do so.
-						</p>
-						<a href="https://github.com/rileyzzz/NodeBackend" class="btn btn-primary">Github</a>
+					<div class="card-img-overlay">
+
+						<table class="card-table">
+							<tr>
+								<td>
+									<div class="canvasblock">
+
+									</div>
+								</td>
+								<td>
+									<h4 class="card-title">Node Backend</h4>
+									<p class="card-text">
+										A flexible node editing system I created around April 2020. Includes a demo application that utilizes SDL2 to handle rendering of nodes and editing of control flow, but otherwise uses entirely standard libraries. Designed to permit easy creation of nodes using either custom functions or std functions directly through some fancy templated function wizardry.
+										This project was my first attempt at a large project in C++, so it wasn't set up to compile into a .lib or .dll, however it could easily be modified to do so.
+									</p>
+									<a href="https://github.com/rileyzzz/NodeBackend" class="btn btn-primary">Github</a>
+								</td>
+							</tr>
+						</table>
 					</div>
 				</div>
 
 				<div class="card bg-dark text-white text-left infocard">
 					<img class="card-img infoimage" src="images/pb15.png">
-					<canvas id="CCS" class="previewgraphics"></canvas>
-					<div class="card-img-overlay cardstuff">
-						<h4 class="card-title">Content Creator Sharp</h4>
-						<p class="card-text">
-							A WIP content creation utility for N3V's Trainz Railroad Simulator 2019.
+					
+					<div class="card-img-overlay">
 
-						</p>
+						<table class="card-table">
+							<tr>
+								<td>
+									<div class="canvasblock">
+										<canvas id="CCS" class="previewgraphics"></canvas>
+									</div>
+								</td>
+								<td>
+									<h4 class="card-title">Content Creator Sharp</h4>
+									<p class="card-text">
+										A WIP content creation utility for N3V's Trainz Railroad Simulator 2019.
+
+									</p>
+								</td>
+							</tr>
+						</table>
 					</div>
 				</div>
 				<!--text-right-->
 				<div class="card bg-dark text-white text-left infocard">
 					<!--<img class="card-img infoimage" src="images/pb15.png">-->
-					<canvas id="trainzmesh" class="previewgraphics"></canvas>
-					<div class="card-img-overlay cardstuff">
+					
+					<div class="card-img-overlay">
 
-						<h4 class="card-title">Trainzmesh Viewer</h4>
-						<p class="card-text">
-							An application I created over the course of two weeks in July 2020. Capable of reading and viewing a mesh binary file format used in N3V Games’ Trainz Railroad Simulator 2019. Uses OpenGL through freeGLUT, GLEW, and GLMath, with a single vertex and fragment shader that supports PBR, Parallax Occlusion Mapping, and vertex skinning. A complex project, as no previous format documentation existed, and it required me to spend several days diffing files using the format in a hex editor. With some trial and error (and my prior knowledge of 3D formats) I was able to recognize and understand the data relating to vertices, texture coordinates, vertex normals and tangents, weight indexes, and triangle indices. All of the format’s relevant datatypes are parsed, and then casted into internal structs. The application's core components are separated into three dynamically linked libraries, to allow for reuse in other projects.
-							Currently closed source as to prevent mesh ripping.
-							The application is published on my Patreon, and uses a Patreon verification application I created in C# with the Chromium Embedded Framework. API tokens are stored in the user’s Documents folder, and then verified on application startup using libCURL.
+						<table class="card-table">
+							<tr>
+								<td>
+									<div class="canvasblock">
+										<canvas id="trainzmesh" class="previewgraphics"></canvas>
+									</div>
+								</td>
+								<td>
+									<h4 class="card-title">Trainzmesh Viewer</h4>
+									<p class="card-text">
+										An application I created over the course of two weeks in July 2020. Capable of reading and viewing a mesh binary file format used in N3V Games’ Trainz Railroad Simulator 2019. Uses OpenGL through freeGLUT, GLEW, and GLMath, with a single vertex and fragment shader that supports PBR, Parallax Occlusion Mapping, and vertex skinning. A complex project, as no previous format documentation existed, and it required me to spend several days diffing files using the format in a hex editor. With some trial and error (and my prior knowledge of 3D formats) I was able to recognize and understand the data relating to vertices, texture coordinates, vertex normals and tangents, weight indexes, and triangle indices. All of the format’s relevant datatypes are parsed, and then casted into internal structs. The application's core components are separated into three dynamically linked libraries, to allow for reuse in other projects.
+										Currently closed source as to prevent mesh ripping.
+										The application is published on my Patreon, and uses a Patreon verification application I created in C# with the Chromium Embedded Framework. API tokens are stored in the user’s Documents folder, and then verified on application startup using libCURL.
 
-						</p>
+									</p>
 
-						<a href="https://www.patreon.com/rileyzzz" class="btn btn-primary">Available on Patreon ($10 Tier)</a>
+									<a href="https://www.patreon.com/rileyzzz" class="btn btn-primary">Available on Patreon ($10 Tier)</a>
+								</td>
+							</tr>
+						</table>
 					</div>
 				</div>
 
