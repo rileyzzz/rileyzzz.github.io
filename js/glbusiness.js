@@ -7,9 +7,9 @@ import { UnrealBloomPass } from './threedist/examples/jsm/postprocessing/UnrealB
 
 var params = {
 	exposure: 1.0,
-	bloomStrength: 0.4,
+	bloomStrength: 0.6,
 	bloomThreshold: 0.0,
-	bloomRadius: 0.4
+	bloomRadius: 0.8
 };
 var MOUSEX, MOUSEY = 0;
 //mouse handling, thank you stackoverflow
@@ -57,6 +57,8 @@ timeArray = new Uint8Array(2048);
 var dTex;
 var d2Tex;
 
+
+
 async function init() {
 	// Fix up prefixing
 	window.AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -71,7 +73,7 @@ async function init() {
 	bufferLoader = new BufferLoader(
 		context,
 		[
-			'bruh2.mp3',
+			'bruh8.mp3',
 			//'../sounds/hyper-reality/laughter.wav',
 		],
 		finishedLoading
@@ -100,12 +102,38 @@ function musicPlay() {
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
-var renderer = new THREE.WebGLRenderer({ canvas: glCanvas, alpha: true });
+//var renderer = new THREE.WebGLRenderer({ canvas: glCanvas, alpha: true });
+var renderer = new THREE.WebGLRenderer({ canvas: glCanvas });
+
+var imageloader = new THREE.TextureLoader();
+imageloader.load(
+	// resource URL
+	'assets/space2.png',
+
+	// onLoad callback
+	function (texture) {
+		renderer.toneMapping = THREE.ACESFilmicToneMapping;
+		renderer.toneMappingExposure = 1;
+		//renderer.outputEncoding = THREE.sRGBEncoding;
+
+		scene.environment = texture;
+		scene.background = texture;
+	},
+
+	// onProgress callback currently not supported
+	undefined,
+
+	// onError callback
+	function (err) {
+		console.error('An error happened.');
+	}
+);
+
 
 //post processing
 var renderScene = new RenderPass(scene, camera);
-renderScene.clearColor = new THREE.Color(0, 0, 0);
-renderScene.clearAlpha = 0;
+//renderScene.clearColor = new THREE.Color(0, 0, 0);
+//renderScene.clearAlpha = 0;
 
 var bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
 bloomPass.threshold = params.bloomThreshold;
@@ -232,6 +260,15 @@ function onWindowResize() {
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	composer.setSize(window.innerWidth, window.innerHeight);
 
+	//bg resizing
+	const targetAspect = window.innerWidth / window.innerHeight;
+	const imageAspect = 1920 / 1080;
+	const factor = imageAspect / targetAspect;
+
+	scene.background.offset.x = factor > 1 ? (1 - 1 / factor) / 2 : 0;
+	scene.background.repeat.x = factor > 1 ? 1 / factor : 1;
+	scene.background.offset.y = factor > 1 ? 0 : (1 - factor) / 2;
+	scene.background.repeat.y = factor > 1 ? 1 : factor;
 }
 
 
