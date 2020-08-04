@@ -73,7 +73,7 @@ async function init() {
 	bufferLoader = new BufferLoader(
 		context,
 		[
-			'bruh8.mp3',
+			'bruh.mp3',
 			//'../sounds/hyper-reality/laughter.wav',
 		],
 		finishedLoading
@@ -162,20 +162,23 @@ composer.render(scene, camera);
 var grid;
 var GridMaterial;
 var SpinMaterial;
+var BarMaterial;
 var spinningstuff = new Array();
+var BarList = new Array();
 //scene.add(cube);
 
 camera.position.y = 5;
 camera.position.z = 5;
-camera.lookAt(0, 0, 0);
+camera.lookAt(0, -0.5, 0);
 var loader = new GLTFLoader();
 
 
+dTex = new THREE.DataTexture(dataArray, 32, 32, THREE.RedFormat);
+dTex.wrapS = dTex.wrapT = THREE.RepeatWrapping;
 
 loader.load('assets/3d/grid.glb', function (gltf) {
 
-	dTex = new THREE.DataTexture(dataArray, 32, 32, THREE.RedFormat);
-	dTex.wrapS = dTex.wrapT = THREE.RepeatWrapping;
+
 
 	let uniforms = {
 		colorA: { type: 'vec3', value: new THREE.Color(0xb967ff) },
@@ -202,11 +205,65 @@ loader.load('assets/3d/grid.glb', function (gltf) {
 	grid.scale.set(scale, scale, scale);
 
 	scene.add(grid);
+	LoadBars();
+
 }, undefined, function (error) {
 
 	console.error(error);
 
 });
+
+const BarCount = 256;
+const BarScale = 0.01;
+
+function LoadBars() {
+	loader.load('assets/3d/bar.glb', function (gltf) {
+
+		let uniforms = {
+			colorA: { type: 'vec3', value: new THREE.Color(0xb967ff) },
+			colorB: { type: 'vec3', value: new THREE.Color(0xfaa80f) },
+			time: { type: 'float', value: 1.0 }
+		}
+		BarMaterial = new THREE.ShaderMaterial({
+			uniforms: uniforms,
+			vertexShader: document.getElementById('barvertShader').textContent,
+			fragmentShader: document.getElementById('barfragShader').textContent
+		});
+
+		gltf.scene.traverse(function (child) {
+			if (child.isMesh) {
+				child.material = BarMaterial;
+			}
+		});
+
+		//width 8
+		for (let Side = 0; Side < 4; Side++) {
+			let SideGroup = new THREE.Group();
+			for (let BarID = 0; BarID <= BarCount; BarID++) {
+				let curbar = gltf.scene.clone();
+
+				curbar.scale.set(BarScale, 0.1, BarScale);
+				let sidedist = -4.0;
+				let along = BarID / BarCount;
+
+				curbar.position.set((along * 8.0) - 4.0, 0.0, sidedist);
+
+				SideGroup.add(curbar);
+			}
+			SideGroup.rotation.set(0.0, Side * (Math.PI / 2), 0.0);
+
+			BarList.push(SideGroup);
+			grid.add(BarList[BarList.length - 1]);
+		}
+
+
+	}, undefined, function (error) {
+
+		console.error(error);
+
+	});
+}
+
 
 
 loader.load('assets/3d/spin.glb', function (gltf) {
@@ -280,9 +337,11 @@ var animate = function () {
 	frame++;
 	var elapsedMilliseconds = Date.now() - startTime;
 
-	if (SpinMaterial) {
+	if (SpinMaterial && BarMaterial) {
 		SpinMaterial.uniforms.time.value = (elapsedMilliseconds / 1000.0);
 		SpinMaterial.uniforms.time.needsUpdate = true;
+		BarMaterial.uniforms.time.value = (elapsedMilliseconds / 1000.0);
+		BarMaterial.uniforms.time.needsUpdate = true;
     }
 
 	if (grid) {
@@ -349,7 +408,22 @@ var animate = function () {
             }
 
 			//cube.rotation.y += (dataArray[512] - 127) / 250;
-			
+
+			//Bar visualizer
+			for (let Side = 0; Side < BarList.length; Side++) {
+				let SideGroup = BarList[Side];
+
+				let BarID = 0;
+				SideGroup.traverse(function (child) {
+					if (child.isMesh) {
+						let along = BarID / BarCount;
+						let target = Math.floor((along / 4.0) * analyser.fftSize);
+						child.scale.set(1.0, dataArray[target] / 10.0, 1.0);
+
+						BarID++;
+					}
+				});
+			}
 
 		}
 

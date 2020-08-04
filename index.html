@@ -75,7 +75,7 @@
 		<div class="information-container" id="ProjectContent">
 			<h2 class="text-white">projects</h2>
 			<div class="infocontent scroll1">
-				
+
 				<!--<div class="infosubcontent">-->
 
 				<div class="card bg-dark text-white text-left infocard">
@@ -105,7 +105,7 @@
 
 				<div class="card bg-dark text-white text-left infocard">
 					<img class="card-img infoimage" src="images/pb15.png">
-					
+
 					<div class="card-img-overlay">
 
 						<table class="card-table">
@@ -129,7 +129,7 @@
 
 				<div class="card bg-dark text-white text-left infocard">
 					<!--<img class="card-img infoimage" src="images/pb15.png">-->
-					
+
 					<div class="card-img-overlay">
 
 						<table class="card-table">
@@ -166,7 +166,7 @@
 				</div>
 			</div>
 		</div>
-		
+
 
 
 		<script>
@@ -260,6 +260,33 @@
 
 			float TargColor = 1.0 - mod(vUv.x - (time / 8.0), 1.0);
 			gl_FragColor = vec4(mix(colorA, colorB, TargColor), 1.0);
+			}
+		</script>
+
+		<script id="barvertShader" type="x-shader/x-vertex">
+			varying vec2 vUv;
+
+			void main() {
+			vUv = uv;
+
+			vec4 modelViewPosition = modelViewMatrix * vec4(position, 1.0);
+			gl_Position = projectionMatrix * modelViewPosition;
+			}
+		</script>
+
+		<script id="barfragShader" type="x-shader/x-fragment">
+			uniform vec3 colorA;
+			uniform vec3 colorB;
+			varying vec2 vUv;
+			uniform float time;
+			void main() {
+
+			//float TargColor = mod(vUv.y + (time / 8.0), 1.0);
+			//float TargColor = clamp(vUv.y / 1.0, 0.0, 1.0);
+			float TargColor = vUv.y - 0.25;
+
+			gl_FragColor = vec4(mix(colorA, colorB, TargColor), 1.0);
+			//gl_FragColor = vec4(colorA, 1.0);
 			}
 		</script>
 
