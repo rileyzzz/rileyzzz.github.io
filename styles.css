@@ -106,19 +106,34 @@ body {
 .infocontent {
     position: relative; /* Sit on top of the page content */
     height: 100%;
-    width: 100%;
-
+    width: 90%;
+    margin: auto;
     /*    position: fixed;*/
     z-index: 2;
     /*    top: 10%;*/
     /*    bottom: 10px;*/
     left: 0;
+    top: 10px;
     /*    top: 0;
     left: 0;
     background-color: rgb(0,0,0);
     background-color: rgba(0,0,0, 0.9);*/
     /*    overflow-y: hidden;*/
+}
+.infoimage {
+    top: 0;
+    left: 0;
+    object-fit: cover;
+/*    width: 60%;*/
+    height: 100%;
+    /*    width: 20%;
+    height: 100%;*/
+    overflow: hidden;
+}
 
+.infocard {
+    height: 500px;
+    overflow-y: hidden;
 }
 
 .themgraphics {
