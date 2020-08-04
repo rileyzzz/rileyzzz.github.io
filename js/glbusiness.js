@@ -71,7 +71,7 @@ function init() {
 	bufferLoader = new BufferLoader(
 		context,
 		[
-			'bruh3.mp3',
+			'bruh2.mp3',
 			//'../sounds/hyper-reality/laughter.wav',
 		],
 		finishedLoading
