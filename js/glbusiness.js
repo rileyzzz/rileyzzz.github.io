@@ -57,7 +57,7 @@ timeArray = new Uint8Array(2048);
 var dTex;
 var d2Tex;
 
-function init() {
+async function init() {
 	// Fix up prefixing
 	window.AudioContext = window.AudioContext || window.webkitAudioContext;
 	context = new AudioContext();
@@ -80,7 +80,7 @@ function init() {
 	bufferLoader.load();
 }
 
-function finishedLoading(bufferList) {
+async function finishedLoading(bufferList) {
 	// Create two sources and play them both together.
 	var source1 = context.createBufferSource();
 	source1.buffer = bufferList[0];
@@ -138,6 +138,7 @@ var spinningstuff = new Array();
 //scene.add(cube);
 
 camera.position.y = 5;
+camera.position.z = 5;
 camera.lookAt(0, 0, 0);
 var loader = new GLTFLoader();
 
@@ -183,7 +184,7 @@ loader.load('assets/3d/grid.glb', function (gltf) {
 loader.load('assets/3d/spin.glb', function (gltf) {
 
 	let uniforms = {
-		colorB: { type: 'vec3', value: new THREE.Color(0xb967ff) },
+		colorB: { type: 'vec3', value: new THREE.Color(0x8400b8) },
 		colorA: { type: 'vec3', value: new THREE.Color(0xfaa80f) },
 		time: { type: 'float', value: 1.0 }
 	}

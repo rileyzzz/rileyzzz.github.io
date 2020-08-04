@@ -19,7 +19,7 @@ var ENVMAP;
 
 
 
-$(window).on('load', function () {
+$(window).on('load', async function () {
 	new RGBELoader()
 		.setDataType(THREE.UnsignedByteType)
 		.setPath('assets/3d/previews/')
@@ -33,7 +33,7 @@ $(window).on('load', function () {
 
 
 
-function StartPreviews() {
+async function StartPreviews() {
 	$('.previewgraphics').each(function (i, obj) {
 
 		let scene = new THREE.Scene();
@@ -41,9 +41,11 @@ function StartPreviews() {
 		let renderer = new THREE.WebGLRenderer({ canvas: obj, alpha: true, antialias: true });
 		renderer.setClearColor(0x000000, 0);
 
+		//renderer.shadowMap.enabled = true;
+		//renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 		//PBR STUFF
-		//renderer.toneMapping = THREE.ACESFilmicToneMapping;
+		renderer.toneMapping = THREE.ACESFilmicToneMapping;
 		renderer.toneMappingExposure = 1;
 		renderer.outputEncoding = THREE.sRGBEncoding;
 		let pmremGenerator = new THREE.PMREMGenerator(renderer);
@@ -63,18 +65,15 @@ function StartPreviews() {
 
 
 
-		//let renderScene = new RenderPass(scene, camera);
-		//renderer.clearColor = new THREE.Color(0, 0, 0);
-		//renderer.clearAlpha = 0;
+		//let composer = new EffectComposer(renderer);
 
 		//var ssaoPass = new SSAOPass(scene, camera, obj.offsetWidth, obj.offsetHeight);
 		//ssaoPass.kernelRadius = 16;
+		//ssaoPass.minDistance = 0.003;
+		//composer.addPass(ssaoPass);
 		
 
-		//let composer = new EffectComposer(renderer);
-		//composer.addPass(renderScene);
-		//composer.addPass(ssaoPass);
-		//composer.setClearColor(0x000000, 0);
+
 
 		let previewmodel;
 
@@ -88,6 +87,7 @@ function StartPreviews() {
 
 			previewmodel = gltf.scene;
 
+			//previewmodel.receiveShadow = true;
 			//previewmodel.position.set(0.0, -4.0, 0.0);
 			let scale = 1.0;
 			previewmodel.scale.set(scale, scale, scale);
@@ -105,6 +105,8 @@ function StartPreviews() {
 			camera.updateProjectionMatrix();
 
 			renderer.setSize(obj.offsetWidth, obj.offsetHeight, false);
+			//ssaoPass.setSize(obj.offsetWidth, obj.offsetHeight, false);
+			//composer.setSize(obj.offsetWidth, obj.offsetHeight, false);
 
 		}
 		window.addEventListener('resize', onPreviewResize, false);
@@ -121,6 +123,7 @@ function StartPreviews() {
 				previewmodel.rotation.y = Math.sin(elapsedMilliseconds / 2000.0) / 10.0;
 			}
 			renderer.render(scene, camera);
+			//composer.render();
 
 			requestAnimationFrame(animate);
 		};
