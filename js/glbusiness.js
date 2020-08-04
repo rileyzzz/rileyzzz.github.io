@@ -133,6 +133,7 @@ composer.render(scene, camera);
 //var cube = new THREE.Mesh(geometry, material);
 var grid;
 var GridMaterial;
+var SpinMaterial;
 var spinningstuff = new Array();
 //scene.add(cube);
 
@@ -183,9 +184,10 @@ loader.load('assets/3d/spin.glb', function (gltf) {
 
 	let uniforms = {
 		colorB: { type: 'vec3', value: new THREE.Color(0xb967ff) },
-		colorA: { type: 'vec3', value: new THREE.Color(0xfaa80f) }
+		colorA: { type: 'vec3', value: new THREE.Color(0xfaa80f) },
+		time: { type: 'float', value: 1.0 }
 	}
-	var SpinMaterial = new THREE.ShaderMaterial({
+	SpinMaterial = new THREE.ShaderMaterial({
 		uniforms: uniforms,
 		side: THREE.DoubleSide,
 		transparent: true,
@@ -238,11 +240,14 @@ var startTime = Date.now();
 var animate = function () {
 	requestAnimationFrame(animate);
 	frame++;
-	if (grid) {
+	var elapsedMilliseconds = Date.now() - startTime;
 
-		var elapsedMilliseconds = Date.now() - startTime;
+
+	if (grid) {
 		GridMaterial.uniforms.time.value = (elapsedMilliseconds / 1000.0);
 		GridMaterial.uniforms.time.needsUpdate = true;
+		SpinMaterial.uniforms.time.value = (elapsedMilliseconds / 1000.0);
+		SpinMaterial.uniforms.time.needsUpdate = true;
 
 		if (analyser) {
 			//dataArray.fill((Math.sin(frame/50) / 2 + 1) * 255);

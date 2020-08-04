@@ -211,6 +211,7 @@
 			void main() {
 			//vUv = position;
 			vUv = uv;
+			//vUv = vec2(uv.x, abs(uv.y - 0.5) * 2.0);
 
 			vec4 modelViewPosition = modelViewMatrix * vec4(position, 1.0);
 			gl_Position = projectionMatrix * modelViewPosition;
@@ -221,13 +222,11 @@
 			uniform vec3 colorA;
 			uniform vec3 colorB;
 			varying vec2 vUv;
-
+			uniform float time;
 			void main() {
-			//gl_FragColor = vec4(mix(colorA, colorB, vUv.x), 1.0);
-			//float TargColor = (sin(vUv.x * 40.0) / 2.0 + 0.5);
-			float TargColor = vUv.x;
-			//gl_FragColor = vec4(TargColor, TargColor, TargColor, 1.0);
-			gl_FragColor = vec4(mix(colorA, colorB, TargColor), 1.0); //abs(vUv.x - 1.0)
+
+			float TargColor = 1.0 - mod(vUv.x - (time / 8.0), 1.0);
+			gl_FragColor = vec4(mix(colorA, colorB, TargColor), 1.0);
 			}
 		</script>
 
