@@ -213,8 +213,8 @@ loader.load('assets/3d/grid.glb', function (gltf) {
 
 });
 
-const BarCount = 256;
-const BarScale = 0.01;
+const BarCount = 64;
+const BarScale = 0.08;
 
 function LoadBars() {
 	loader.load('assets/3d/bar.glb', function (gltf) {
