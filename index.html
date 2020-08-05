@@ -148,7 +148,7 @@
 
 									</p>
 
-									<a href="https://www.patreon.com/rileyzzz" class="btn btn-primary">Available on Patreon ($10 Tier)</a>
+									<!--<a href="https://www.patreon.com/rileyzzz" class="btn btn-primary">Available on Patreon ($10 Tier)</a>-->
 								</td>
 							</tr>
 						</table>
@@ -306,9 +306,17 @@
 
 			//float TargColor = mod(vUv.y + (time / 8.0), 1.0);
 			//float TargColor = clamp(vUv.y / 1.0, 0.0, 1.0);
-			float TargColor = vUv.y - 0.25;
 
-			gl_FragColor = vec4(mix(colorA, colorB, TargColor), 1.0);
+			//float TargColor = vUv.y - 0.25;
+			//float alternating = round(mod((time * 2.0), 1.0));
+
+			float segments = round((1.0 - vUv.y) * 4.0);
+			//float TargColor = alternating == 0.0 ? segments : 1.0 - segments;
+			float TargColor = segments;
+
+			vec3 TestGradient = mix(colorA, colorB, (1.0 - vUv.y) * 4.0);
+
+			gl_FragColor = vec4(mix(colorA, TestGradient, TargColor), 0.4);
 			//gl_FragColor = vec4(colorA, 1.0);
 			}
 		</script>

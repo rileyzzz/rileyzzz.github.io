@@ -220,16 +220,16 @@ function LoadBars() {
 	loader.load('assets/3d/bar.glb', function (gltf) {
 
 		let uniforms = {
-			colorA: { type: 'vec3', value: new THREE.Color(0xb967ff) },
+			colorA: { type: 'vec3', value: new THREE.Color(0x8400b8) },
 			colorB: { type: 'vec3', value: new THREE.Color(0xfaa80f) },
 			time: { type: 'float', value: 1.0 }
 		}
 		BarMaterial = new THREE.ShaderMaterial({
 			uniforms: uniforms,
+			transparent: true,
 			vertexShader: document.getElementById('barvertShader').textContent,
 			fragmentShader: document.getElementById('barfragShader').textContent
 		});
-
 		gltf.scene.traverse(function (child) {
 			if (child.isMesh) {
 				child.material = BarMaterial;
@@ -417,6 +417,7 @@ var animate = function () {
 				SideGroup.traverse(function (child) {
 					if (child.isMesh) {
 						let along = BarID / BarCount;
+						if (Side % 2 == 0) along = 1.0 - along; //mirror
 						let target = Math.floor((along / 4.0) * analyser.fftSize);
 						child.scale.set(1.0, dataArray[target] / 10.0, 1.0);
 
