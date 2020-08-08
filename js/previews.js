@@ -19,22 +19,18 @@ var ENVMAP;
 
 
 
-$(window).on('load', async function () {
-	new RGBELoader()
-		.setDataType(THREE.UnsignedByteType)
-		.setPath('assets/3d/previews/')
-		.load('env.hdr', function (texture) {
-			ENVMAP = texture;
-			StartPreviews();
-		});
+
+
+new RGBELoader()
+.setDataType(THREE.UnsignedByteType)
+.setPath('assets/3d/previews/')
+.load('env_small.hdr', async function (texture) {
+	ENVMAP = texture;
+	StartPreviews();
 });
 
-
-
-
-
 async function StartPreviews() {
-	$('.previewgraphics').each(function (i, obj) {
+	$('.previewgraphics').each(async function (i, obj) {
 
 		let scene = new THREE.Scene();
 		let camera = new THREE.PerspectiveCamera(75, obj.offsetWidth / obj.offsetHeight, 0.1, 1000);
@@ -83,7 +79,7 @@ async function StartPreviews() {
 
 
 
-		loader.load('assets/3d/previews/' + obj.id + '.glb', function (gltf) {
+		loader.load('assets/3d/previews/' + obj.id + '.glb', async function (gltf) {
 
 			previewmodel = gltf.scene;
 

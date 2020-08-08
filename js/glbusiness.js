@@ -73,7 +73,7 @@ async function init() {
 	bufferLoader = new BufferLoader(
 		context,
 		[
-			'bruh.mp3',
+			'bruh5.mp3',
 			//'../sounds/hyper-reality/laughter.wav',
 		],
 		finishedLoading
@@ -213,8 +213,8 @@ loader.load('assets/3d/grid.glb', function (gltf) {
 
 });
 
-const BarCount = 64;
-const BarScale = 0.08;
+const BarCount = 128;
+const BarScale = 0.01;
 
 function LoadBars() {
 	loader.load('assets/3d/bar.glb', function (gltf) {
@@ -226,7 +226,7 @@ function LoadBars() {
 		}
 		BarMaterial = new THREE.ShaderMaterial({
 			uniforms: uniforms,
-			transparent: true,
+			//transparent: true,
 			vertexShader: document.getElementById('barvertShader').textContent,
 			fragmentShader: document.getElementById('barfragShader').textContent
 		});
@@ -239,7 +239,7 @@ function LoadBars() {
 		//width 8
 		for (let Side = 0; Side < 4; Side++) {
 			let SideGroup = new THREE.Group();
-			for (let BarID = 0; BarID <= BarCount; BarID++) {
+			for (let BarID = 1; BarID <= BarCount; BarID++) {
 				let curbar = gltf.scene.clone();
 
 				curbar.scale.set(BarScale, 0.1, BarScale);
@@ -444,9 +444,9 @@ var animate = function () {
 };
 
 
-
-$(window).on('load', function () {
+$(window).on('load', async function () {
 	onWindowResize();
 	animate();
+	
 });
 

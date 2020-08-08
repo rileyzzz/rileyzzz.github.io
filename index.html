@@ -316,7 +316,7 @@
 
 			vec3 TestGradient = mix(colorA, colorB, (1.0 - vUv.y) * 4.0);
 
-			gl_FragColor = vec4(mix(colorA, TestGradient, TargColor), 0.4);
+			gl_FragColor = vec4(mix(colorA, TestGradient, TargColor), 1.0);
 			//gl_FragColor = vec4(colorA, 1.0);
 			}
 		</script>
