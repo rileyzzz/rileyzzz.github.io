@@ -2,6 +2,58 @@ import { GLTFLoader } from './loaders/GLTFLoader.js';
 import { EffectComposer } from './threedist/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from './threedist/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from './threedist/examples/jsm/postprocessing/UnrealBloomPass.js';
+import { GUI } from './threedist/examples/jsm/libs/dat.gui.module.js';
+
+
+const inputElement = document.getElementById("fileInput");
+inputElement.addEventListener("change", handleFiles, false);
+var AudioFile;
+function handleFiles() {
+	AudioFile = this.files[0]; /* now you can work with the file list */
+	//alert(URL.createObjectURL(AudioFile));
+}
+
+var AudioFileChanged = false;
+var ActiveGridModel = 'Default';
+var controls = {
+	GridModel: 'Default',
+	UploadFile: function () {
+		inputElement.click();
+		AudioFileChanged = true;
+    },
+	Apply: function () {
+		if (AudioFile && AudioFileChanged) {
+			init(URL.createObjectURL(AudioFile));
+			AudioFileChanged = false;
+		}
+		if (this.GridModel != ActiveGridModel) {
+			ActiveGridModel = this.GridModel;
+			switch (ActiveGridModel) {
+				default:
+				case 'Default':
+					LoadGrid('assets/3d/grid.glb');
+					break;
+				case 'High Density':
+					LoadGrid('assets/3d/densegrid.glb');
+					break;
+				case 'Circle (expensive)':
+					LoadGrid('assets/3d/densegrid2.glb');
+            }
+        }
+		//const curFiles = $('#fileInput').files;
+		//if (curFiles.length != 0) {
+			//alert(URL.createObjectURL(curFiles[0]));
+        //}
+    }
+}
+
+var gui = new GUI();
+gui.add(controls, 'GridModel', ['Default', 'High Density', 'Circle (expensive)']).name('Grid Model');
+gui.add(controls, 'UploadFile').name('Upload Sound');
+gui.add(controls, 'Apply');
+
+
+
 //import { ShaderPass } from './threedist/examples/jsm/postprocessing/ShaderPass.js';
 //import { FXAAShader } from './threedist/examples/jsm/shaders/FXAAShader.js';
 
@@ -59,9 +111,10 @@ var d2Tex;
 
 
 
-async function init() {
+async function init(soundFile) {
 	// Fix up prefixing
 	window.AudioContext = window.AudioContext || window.webkitAudioContext;
+	if (context) context.close();
 	context = new AudioContext();
 	analyser = context.createAnalyser();
 	analyser.fftSize = 2048;
@@ -72,13 +125,9 @@ async function init() {
 	//alert(bufferLength); //1024
 	bufferLoader = new BufferLoader(
 		context,
-		[
-			'bruh5.mp3',
-			//'../sounds/hyper-reality/laughter.wav',
-		],
+		[soundFile],
 		finishedLoading
 	);
-
 	bufferLoader.load();
 }
 
@@ -94,7 +143,8 @@ var musicStartTime;
 function musicPlay() {
 	document.removeEventListener('click', musicPlay);
 	document.removeEventListener('touchstart', musicPlay);
-	init();
+	//init();
+	init('bruh.mp3');
 	musicStartTime = Date.now();
 };
 
@@ -176,42 +226,49 @@ var loader = new GLTFLoader();
 dTex = new THREE.DataTexture(dataArray, 32, 32, THREE.RedFormat);
 dTex.wrapS = dTex.wrapT = THREE.RepeatWrapping;
 
-loader.load('assets/3d/grid.glb', function (gltf) {
-
-
-
-	let uniforms = {
-		colorA: { type: 'vec3', value: new THREE.Color(0xb967ff) },
-		colorB: { type: 'vec3', value: new THREE.Color(0xfaa80f) },
-		time: { type: 'float', value: 1.0 },
-		soundTex: { type: 't', value: dTex }
-	}
-	GridMaterial = new THREE.ShaderMaterial({
-		uniforms: uniforms,
-		vertexShader: document.getElementById('vertexShader').textContent,
-		fragmentShader: document.getElementById('fragmentShader').textContent
-	});
-
-	gltf.scene.traverse(function (child) {
-		if (child.isMesh) {
-			child.material = GridMaterial;
+function LoadGrid(gridFile) {
+	loader.load(gridFile, function (gltf) {
+		let uniforms = {
+			colorA: { type: 'vec3', value: new THREE.Color(0xb967ff) },
+			colorB: { type: 'vec3', value: new THREE.Color(0xfaa80f) },
+			time: { type: 'float', value: 1.0 },
+			soundTex: { type: 't', value: dTex }
 		}
+		GridMaterial = new THREE.ShaderMaterial({
+			uniforms: uniforms,
+			vertexShader: document.getElementById('vertexShader').textContent,
+			fragmentShader: document.getElementById('fragmentShader').textContent
+		});
+
+		gltf.scene.traverse(function (child) {
+			if (child.isMesh) {
+				child.material = GridMaterial;
+			}
+		});
+
+		if (grid) {
+			//delete pre existing
+			scene.remove(grid);
+        }
+
+		grid = gltf.scene;
+
+		grid.position.set(0.0, -4.0, 0.0);
+		let scale = 3.0;
+		grid.scale.set(scale, scale, scale);
+
+		scene.add(grid);
+		LoadBars();
+
+	}, undefined, function (error) {
+
+		console.error(error);
+
 	});
+}
 
-	grid = gltf.scene;
+LoadGrid('assets/3d/grid.glb');
 
-	grid.position.set(0.0, -4.0, 0.0);
-	let scale = 3.0;
-	grid.scale.set(scale, scale, scale);
-
-	scene.add(grid);
-	LoadBars();
-
-}, undefined, function (error) {
-
-	console.error(error);
-
-});
 
 const BarCount = 128;
 const BarScale = 0.01;
