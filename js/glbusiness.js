@@ -2,6 +2,7 @@ import { GLTFLoader } from './loaders/GLTFLoader.js';
 import { EffectComposer } from './threedist/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from './threedist/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from './threedist/examples/jsm/postprocessing/UnrealBloomPass.js';
+import { RGBELoader } from './threedist/examples/jsm/loaders/RGBELoader.js';
 import { GUI } from './threedist/examples/jsm/libs/dat.gui.module.js';
 
 
@@ -33,6 +34,12 @@ var controls = {
 				case 'Default':
 					LoadGrid('assets/3d/grid.glb');
 					break;
+				case 'Hexagons':
+					LoadGrid('assets/3d/hex.glb');
+					break;
+				case 'Polygons':
+					LoadGrid('assets/3d/poly.glb');
+					break;
 				case 'High Density':
 					LoadGrid('assets/3d/densegrid.glb');
 					break;
@@ -48,7 +55,7 @@ var controls = {
 }
 
 var gui = new GUI();
-gui.add(controls, 'GridModel', ['Default', 'High Density', 'Circle (expensive)']).name('Grid Model');
+gui.add(controls, 'GridModel', ['Default', 'Hexagons', 'Polygons', 'High Density', 'Circle (expensive)']).name('Grid Model');
 gui.add(controls, 'UploadFile').name('Upload Sound');
 gui.add(controls, 'Apply');
 
@@ -155,29 +162,37 @@ var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHei
 //var renderer = new THREE.WebGLRenderer({ canvas: glCanvas, alpha: true });
 var renderer = new THREE.WebGLRenderer({ canvas: glCanvas });
 
-var imageloader = new THREE.TextureLoader();
-imageloader.load(
-	// resource URL
-	'assets/space2.png',
+async function LoadEnvironment() {
+	var imageloader = new THREE.TextureLoader();
+	imageloader.load(
+		'assets/space2.png',
+		function (texture) {
+			renderer.toneMapping = THREE.ACESFilmicToneMapping;
+			renderer.toneMappingExposure = 1;
+			//renderer.outputEncoding = THREE.sRGBEncoding;
 
-	// onLoad callback
-	function (texture) {
-		renderer.toneMapping = THREE.ACESFilmicToneMapping;
-		renderer.toneMappingExposure = 1;
-		//renderer.outputEncoding = THREE.sRGBEncoding;
+			//scene.environment = texture;
+			scene.background = texture;
+		},
+		undefined,
+		function (err) {
+			console.error('An error happened.');
+		}
+	);
+	new RGBELoader()
+		.setDataType(THREE.UnsignedByteType)
+		.setPath('assets/3d/previews/')
+		.load('env_small.hdr', async function (texture) {
+			//renderer.outputEncoding = THREE.sRGBEncoding;
+			let pmremGenerator = new THREE.PMREMGenerator(renderer);
+			pmremGenerator.compileEquirectangularShader();
 
-		scene.environment = texture;
-		scene.background = texture;
-	},
+			let envMap = pmremGenerator.fromEquirectangular(texture).texture;
 
-	// onProgress callback currently not supported
-	undefined,
-
-	// onError callback
-	function (err) {
-		console.error('An error happened.');
-	}
-);
+			scene.environment = envMap;
+		});
+}
+LoadEnvironment();
 
 
 //post processing
@@ -210,8 +225,10 @@ composer.render(scene, camera);
 //var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
 //var cube = new THREE.Mesh(geometry, material);
 var grid;
+//var tardis;
 var GridMaterial;
 var SpinMaterial;
+var SpinCount = 8;
 var BarMaterial;
 var spinningstuff = new Array();
 var BarList = new Array();
@@ -229,7 +246,7 @@ dTex.wrapS = dTex.wrapT = THREE.RepeatWrapping;
 function LoadGrid(gridFile) {
 	loader.load(gridFile, function (gltf) {
 		let uniforms = {
-			colorA: { type: 'vec3', value: new THREE.Color(0xb967ff) },
+			colorA: { type: 'vec3', value: new THREE.Color(0x4100f2) }, //0xb967ff
 			colorB: { type: 'vec3', value: new THREE.Color(0xfaa80f) },
 			time: { type: 'float', value: 1.0 },
 			soundTex: { type: 't', value: dTex }
@@ -253,7 +270,8 @@ function LoadGrid(gridFile) {
 
 		grid = gltf.scene;
 
-		grid.position.set(0.0, -4.0, 0.0);
+		//grid.position.set(0.0, -4.0, 0.0);
+		grid.position.set(0.0, -1.0, 0.0);
 		let scale = 3.0;
 		grid.scale.set(scale, scale, scale);
 
@@ -346,10 +364,10 @@ loader.load('assets/3d/spin.glb', function (gltf) {
 
 	gltf.scene.position.set(0.0, -0.4, 0.0);
 
-	for (let SpinID = 1; SpinID < 8; SpinID++) {
+	for (let SpinID = 1; SpinID < SpinCount; SpinID++) {
 		let curspinner = gltf.scene.clone();
 
-		let scale = SpinID / 8;
+		let scale = SpinID / SpinCount;
 		curspinner.scale.set(scale, scale, scale);
 
 		spinningstuff.push(curspinner);
@@ -360,10 +378,18 @@ loader.load('assets/3d/spin.glb', function (gltf) {
 	console.error(error);
 });
 
-
-
-
-
+//async function LoadExtras() {
+//	loader.load('assets/3d/tardis.glb', async function (gltf) {
+//		tardis = gltf.scene;
+//		tardis.position.set(0.0, -0.4, 10.0);
+//		let scale = 0.3;
+//		tardis.scale.set(scale, scale, scale);
+//		scene.add(tardis);
+//	}, undefined, function (error) {
+//		console.error(error);
+//	});
+//}
+//LoadExtras();
 
 window.addEventListener('resize', onWindowResize, false);
 function onWindowResize() {
@@ -387,6 +413,7 @@ function onWindowResize() {
 
 
 //var BPM = 110.8 / 4.0;
+var scrollTarget = camera.position.y;
 var frame = 0;
 var startTime = Date.now();
 var animate = function () {
@@ -424,7 +451,7 @@ var animate = function () {
 
 			for (let i = 0; i < spinningstuff.length; i++) {
 
-				let corescale = (i + 1) / 8;
+				let corescale = (i + 1) / SpinCount;
 				
 
 
@@ -496,10 +523,30 @@ var animate = function () {
 
 		//grid.position.set(NewX / 2000.0, -4.0, NewY / 2000.0);
 	}
+	//if (tardis) {
+	//	tardis.rotation.y += 0.01;
+ //   }
+	//camera.position.y -= scroll;
+	//camera.position.y = scrollTarget;
+	camera.position.y = lerp(camera.position.y, scrollTarget, 0.2);
+	//camera.position.z = lerp(camera.position.z, scrollTarget * 1.0, 0.2);
+	camera.lookAt(0, -0.5, 0);
+
 	//renderer.render(scene, camera);
 	composer.render(scene, camera);
 };
 
+function lerp(start, end, amt) {
+	return (1.0 - amt) * start + amt * end;
+}
+
+function onDocumentMouseWheel(event) {
+	let scroll = event.wheelDeltaY / 400.0;
+	//camera.position.y -= scroll;
+	scrollTarget -= scroll;
+}
+
+document.addEventListener('mousewheel', onDocumentMouseWheel, false);
 
 $(window).on('load', async function () {
 	onWindowResize();
