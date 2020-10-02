@@ -242,6 +242,8 @@ var loader = new GLTFLoader();
 
 dTex = new THREE.DataTexture(dataArray, 32, 32, THREE.RedFormat);
 dTex.wrapS = dTex.wrapT = THREE.RepeatWrapping;
+dTex.magFilter = THREE.LinearFilter;
+
 
 function LoadGrid(gridFile) {
 	loader.load(gridFile, function (gltf) {
