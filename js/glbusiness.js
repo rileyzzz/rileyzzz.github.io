@@ -41,6 +41,12 @@ var controls = {
 				case 'Polygons':
 					LoadGrid('assets/3d/poly.glb');
 					break;
+				case 'Strands':
+					LoadGrid('assets/3d/strands.glb');
+					break;
+				case 'Alternate Strands':
+					LoadGrid('assets/3d/strands2.glb');
+					break;
 				case 'High Density':
 					LoadGrid('assets/3d/densegrid.glb');
 					break;
@@ -59,7 +65,7 @@ var controls = {
 }
 
 var gui = new GUI();
-gui.add(controls, 'GridModel', ['Default', 'Hexagons', 'Polygons', 'High Density', 'Circle (expensive)']).name('Grid Model');
+gui.add(controls, 'GridModel', ['Default', 'Hexagons', 'Polygons', 'Strands', 'Alternate Strands', 'High Density', 'Circle (expensive)']).name('Grid Model');
 gui.add(controls, 'HideSpinningRings').name('Hide Spinning Rings');
 gui.add(controls, 'UploadFile').name('Upload Sound');
 gui.add(controls, 'Apply');
