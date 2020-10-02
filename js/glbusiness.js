@@ -18,6 +18,7 @@ var AudioFileChanged = false;
 var ActiveGridModel = 'Default';
 var controls = {
 	GridModel: 'Default',
+	HideSpinningRings: false,
 	UploadFile: function () {
 		inputElement.click();
 		AudioFileChanged = true;
@@ -46,7 +47,10 @@ var controls = {
 				case 'Circle (expensive)':
 					LoadGrid('assets/3d/densegrid2.glb');
             }
-        }
+		}
+		for (let i = 0; i < spinningstuff.length; i++) {
+			spinningstuff[i].visible = !this.HideSpinningRings;
+		}
 		//const curFiles = $('#fileInput').files;
 		//if (curFiles.length != 0) {
 			//alert(URL.createObjectURL(curFiles[0]));
@@ -56,6 +60,7 @@ var controls = {
 
 var gui = new GUI();
 gui.add(controls, 'GridModel', ['Default', 'Hexagons', 'Polygons', 'High Density', 'Circle (expensive)']).name('Grid Model');
+gui.add(controls, 'HideSpinningRings').name('Hide Spinning Rings');
 gui.add(controls, 'UploadFile').name('Upload Sound');
 gui.add(controls, 'Apply');
 
@@ -267,6 +272,7 @@ function LoadGrid(gridFile) {
 
 		if (grid) {
 			//delete pre existing
+			gltf.scene.rotation.copy(grid.rotation); //copy previous rotation
 			scene.remove(grid);
         }
 

@@ -254,15 +254,27 @@
 			uniform vec3 colorB;
 			varying vec2 vUv;
 			uniform sampler2D soundTex;
-
+			//uniform float time;
 			void main() {
 			//const float scale = 15.0;
 			//float soundval = ((texture2D(soundTex, vUv).r - 0.5) * scale) + 0.5;
 
-			float soundval = texture2D(soundTex, vUv).r * 2.0;
+			//vec2 Center = uv - vec2(0.5, 0.5);
+			//float CenterDist = sqrt(Center.x * Center.x + Center.y * Center.y);
+			//float rotation = time + CenterDist;
 
+			//float rotation = time;
+			//vec2 NewUV = vUv;
+			//NewUV -= vec2(0.5, 0.5);
+			//NewUV = vec2(NewUV.x * cos(rotation) - NewUV.y * sin(rotation), NewUV.y * cos(rotation) + NewUV.x * sin(rotation));
+			//NewUV += vec2(0.5, 0.5);
+
+			float soundval = texture2D(soundTex, vUv).r * 2.0;
+			
 			//const float quantize = 4.0;
 			//soundval = floor(soundval * quantize) / quantize;
+
+
 			gl_FragColor = vec4(mix(colorA, colorB, soundval), 1.0);
 			}
 		</script>
