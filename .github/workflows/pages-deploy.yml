@@ -22,7 +22,6 @@ jobs:
           ruby-version: 2.6.x
 
       - name: Install tools
-        working-directory: blog
         run: |
           
           sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys CC86BB64
