@@ -22,7 +22,9 @@ jobs:
           ruby-version: 2.6.x
 
       - name: Install tools
+        working-directory: blog
         run: |
+          
           sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys CC86BB64
           sudo add-apt-repository ppa:rmescandon/yq
           sudo apt update
@@ -33,7 +35,7 @@ jobs:
         with:
           fetch-depth: 0
 
-        working-directory: blog
+        
         
       - name: Bundle Caching
         id: bundle-cache
@@ -49,16 +51,19 @@ jobs:
           bundle config path ${{ env.GEMS_PATH }}
 
       - name: Bundle Install
+        working-directory: blog
         if: steps.bundle-cache.outputs.cache-hit != 'true'
         run: |
           bundle install
 
       - name: Bundle Install locally
+        working-directory: blog
         if: steps.bundle-cache.outputs.cache-hit == 'true'
         run: |
           bundle install --local
 
       - name: Check baseurl
+        working-directory: blog
         run: |
           baseurl="$(grep '^baseurl:' _config.yml | yq r - baseurl)"
           if [[ -n $baseurl ]]; then
@@ -66,6 +71,7 @@ jobs:
           fi
 
       - name: Build Site
+        working-directory: blog
         run: |
           bash tools/build.sh
 
@@ -75,9 +81,11 @@ jobs:
           fi          
 
       - name: Test Site
+        working-directory: blog
         run: |
           bash tools/test.sh "$SPEC_TEST"
 
       - name: Deploy
+        working-directory: blog
         run: |
           bash tools/deploy.sh
