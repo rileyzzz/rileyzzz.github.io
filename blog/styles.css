@@ -1,0 +1,20 @@
+
+html, body {
+  height: 100%;
+}
+
+.console {
+	background-color: black;
+	color: #CCC;
+    text-shadow: 0 .05rem .2rem rgba(0, 0, 0, .8);
+	font-family: "Lucida Console";
+}
+
+.output {
+	overflow-y: scroll;
+	height: 100%;
+}
+
+.entrytext {
+	
+}
