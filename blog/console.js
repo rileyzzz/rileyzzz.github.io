@@ -22,23 +22,55 @@ async function textWrite() {
 	}
 }
 
-function echoLine() {
+function echoLine(text) {
+	$(".output").append("<div class='entrytext'>C:\\Users\\riley>" + text + "</div>");
+}
+
+function processCommand(text) {
+	
+	
 	
 }
 
-$("#entry").keypress(function(){
+
+$("#entry").keydown(function() {
 	var textentry = $("#entry");
 	var text = textentry.val();
 	//submit
 	if(event.key === 'Enter') {
-		
-		
-    } else {
-		console.log(text);
-		textentry.width((text.length + 1) * 9.8);
-	}
-	
+		echoLine(text);
+		processCommand(text);
+		textentry.val("");
+    }
+	textentry.width((text.length + 1) * 9.8);
 });
+
+async function outputWrite(text) {
+	var textentry = $("#entry");
+	var textbuffer = "";
+	while(textbuffer.length < text.length)
+	{
+		textbuffer += text[textbuffer.length];
+		textentry.val(textbuffer);
+		textentry.width((text.length + 1) * 9.8);
+		await new Promise(r => setTimeout(r, 10));
+	}
+}
+
+window.onhashchange = async function () {
+	var textentry = $("#entry");
+	var hashText = "";
+	if (location.hash === "#home")
+		hashText = "home";
+	else if (location.hash === "#posts")
+		hashText = "posts";
+	
+	await outputWrite(hashText);
+	await new Promise(r => setTimeout(r, 20));
+	echoLine(hashText);
+	textentry.val("");
+	processCommand(hashText);
+};
 
 $("#entry").focus();
 $(document).click(function() { $("#entry").focus() });
