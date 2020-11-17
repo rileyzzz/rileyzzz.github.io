@@ -61,6 +61,39 @@ var controls = {
 		//if (curFiles.length != 0) {
 			//alert(URL.createObjectURL(curFiles[0]));
         //}
+	},
+	ConnectAudioDevice: function () {
+		document.removeEventListener('click', musicPlay);
+		document.removeEventListener('touchstart', musicPlay);
+		window.AudioContext = window.AudioContext || window.webkitAudioContext;
+		if (context) context.close();
+		context = new AudioContext();
+		analyser = context.createAnalyser();
+		analyser.fftSize = 2048;
+		//analyser.fftSize = 4096; // increase size so i dont have to uv transform
+		bufferLength = analyser.frequencyBinCount;
+
+		navigator.getUserMedia =
+			navigator.getUserMedia ||
+			navigator.webkitGetUserMedia ||
+			navigator.mozGetUserMedia ||
+			navigator.msGetUserMedia;
+
+		navigator.getUserMedia(
+			{
+				audio: true,
+				video: false
+			},
+			function (stream) {
+				let audioSource = context.createMediaStreamSource(stream);
+				audioSource.connect(analyser);
+				analyser.connect(context.destination);
+				//audioSource.start(0);
+			},
+			function (err) {
+				console.log('Error initializing user media stream: ' + err);
+			}
+		);
     }
 }
 
@@ -69,6 +102,7 @@ gui.add(controls, 'GridModel', ['Default', 'Hexagons', 'Polygons', 'Strands', 'A
 gui.add(controls, 'HideSpinningRings').name('Hide Spinning Rings');
 gui.add(controls, 'UploadFile').name('Upload Sound');
 gui.add(controls, 'Apply');
+gui.add(controls, 'ConnectAudioDevice').name('Connect Audio Device');
 
 
 
