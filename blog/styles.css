@@ -8,11 +8,47 @@ html, body {
 	color: #CCC;
     text-shadow: 0 .05rem .2rem rgba(0, 0, 0, .8);
 	font-family: "Lucida Console";
+	overflow-y: scroll;
+	height: 100%;
 }
 
 .output {
-	overflow-y: scroll;
-	height: 100%;
+
+}
+
+.input {
+	white-space: nowrap;
+}
+
+.cursor {
+	animation: blink 1s steps(1, end) infinite;
+}
+
+@keyframes blink {
+	50% {
+		color: black;
+	}
+}
+
+input[type=text] {
+  padding: 0;
+  height: 30px;
+  width: 0px;
+  position: relative;
+  left: 0;
+  outline: none;
+  background-color: black;
+  color: transparent;
+  text-shadow: 0 0 0 #CCC;
+  border: none;
+  font-size: 16px;
+  &:focus {
+    outline: none;
+  }
+}
+
+[contenteditable=true]:empty:before {
+  content: attr(placeholder);
 }
 
 .entrytext {
