@@ -27,9 +27,13 @@ function echoLine(text) {
 }
 
 function processCommand(text) {
-	
-	
-	
+	switch(text) {
+		case "home":
+			window.location.href = 'https://rileyzzz.dev/';
+			break;
+		default:
+			
+	}
 }
 
 
