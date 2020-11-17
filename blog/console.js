@@ -31,6 +31,9 @@ function processCommand(text) {
 		case "home":
 			window.location.href = 'https://rileyzzz.dev/';
 			break;
+		case "dir posts":
+		
+			break;
 		default:
 			
 	}
@@ -57,22 +60,23 @@ async function outputWrite(text) {
 		textbuffer += text[textbuffer.length];
 		textentry.val(textbuffer);
 		textentry.width((text.length + 1) * 9.8);
-		await new Promise(r => setTimeout(r, 10));
+		await new Promise(r => setTimeout(r, 20));
 	}
 }
 
 window.onhashchange = async function () {
 	var textentry = $("#entry");
-	var hashText = "";
+	var hashCmd = "";
 	if (location.hash === "#home")
-		hashText = "home";
+		hashCmd = "home";
 	else if (location.hash === "#posts")
-		hashText = "posts";
+		hashCmd = "dir posts";
 	
-	await outputWrite(hashText);
+	await outputWrite(hashCmd);
 	await new Promise(r => setTimeout(r, 20));
-	echoLine(hashText);
+	echoLine(hashCmd);
 	textentry.val("");
+	textentry.width(0);
 	processCommand(hashText);
 };
 
