@@ -32,7 +32,11 @@ function processCommand(text) {
 			window.location.href = 'https://rileyzzz.dev/';
 			break;
 		case "dir posts":
-		
+			//10/10/2019  01:20 PM         2,199,663 render.png
+			for(let i = 0; i < 5; i++) {
+				var text = "10/10/2019  01:20 PM         2,199,663 render.png";
+				$(".output").append("<div class='entrytext'>" + text + "</div>");
+			}
 			break;
 		default:
 			
@@ -77,7 +81,7 @@ window.onhashchange = async function () {
 	echoLine(hashCmd);
 	textentry.val("");
 	textentry.width(0);
-	processCommand(hashText);
+	processCommand(hashCmd);
 };
 
 $("#entry").focus();
