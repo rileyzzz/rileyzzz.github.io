@@ -23,7 +23,7 @@ async function textWrite() {
 }
 
 function echoLine(text) {
-	$(".output").append("<div class='entrytext'>C:\\Users\\riley>" + text + "</div>");
+	$(".output").append("<div class='entrytext'>C:\\Users\\rileytest>" + text + "</div>");
 }
 
 function processCommand(text) {
