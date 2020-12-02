@@ -22,7 +22,7 @@ function possibleAnd(A, B) {
     alert(bitwise);
     var ret = [];
     for(let i = 0; i < 9; i++)
-        if(bitwise & (1 << i) == (1 << i))
+        if(bitwise & (1 << i))
             ret.push(i + 1);
     return ret;
 }
