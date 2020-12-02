@@ -2,19 +2,26 @@
 <html lang="en">
 	<head>
         <style>
+            table {
+                border-collapse: collapse;
+            }
             table, td {
                 border: 1px solid black;
             }
-            td {
-                padding: 15px;
+            tr, td {
+                padding: 1px;
+            }
+
+            .numberinput {
+                width: 10px;
             }
         </style>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     </head>
     <body>
         <table id="input">
-            
         </table>
         <script src="solver.js"></script>
+        <button onclick="compute()">Compute</button>
     </body>
 </html>
