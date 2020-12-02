@@ -9,16 +9,17 @@ function RemoveFrom(arr, val) {
 }
 
 function possibleAnd(A, B) {
-    var bitwise = 0;
+    var bitwiseA = 0;
+    var bitwiseB = 0;
     for(let i = 0; i < A.length; i++)
-        bitwise |= 1 << (A[i] - 1);
-    alert(bitwise);
+        bitwiseA |= 1 << (A[i] - 1);
+
     for(let i = 0; i < B.length; i++)
-        bitwise &= 1 << (B[i] - 1);
+        bitwise &= ~0 & (1 << (B[i] - 1));
     alert(bitwise);
     var ret = [];
     for(let i = 0; i < 9; i++)
-        if(bitwise & (1 << i))
+        if(bitwise & (1 << i) == (1 << i))
             ret.push(i + 1);
     return ret;
 }
