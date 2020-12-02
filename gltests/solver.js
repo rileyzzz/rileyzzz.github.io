@@ -9,21 +9,22 @@ function RemoveFrom(arr, val) {
 }
 
 function possibleAnd(A, B) {
-    var bitwiseA = 0;
-    var bitwiseB = 0;
+    let bitwiseA = 0;
+    let bitwiseB = 0;
     for(let i = 0; i < A.length; i++)
         bitwiseA |= 1 << (A[i] - 1);
 
     for(let i = 0; i < B.length; i++)
         bitwiseB |= 1 << (B[i] - 1);
 
-    alert(bitwiseA + " " + bitwiseB);
-    var bitwise = bitwiseA & bitwiseB;
-    alert(bitwise);
-    var ret = [];
+    //alert(bitwiseA + " " + bitwiseB);
+    let bitwise = bitwiseA & bitwiseB;
+    //alert(bitwise);
+    let ret = [];
     for(let i = 0; i < 9; i++)
         if(bitwise & (1 << i))
             ret.push(i + 1);
+
     return ret;
 }
 
@@ -46,7 +47,7 @@ function updatePossibilities() {
         let clearX = clear[0];
         let clearY = clear[1];
         let val = clear[2];
-        //alert("clear " + clearX + clearY + " " + val);
+        console.log("clear " + clearX + " " + clearY + " " + val);
         for(let x = 0; x < 9; x++) {
             if(x != clearX)
                 RemoveFrom(possibilityMatrix[x][clearY], val);
@@ -69,8 +70,16 @@ function updatePossibilities() {
                         RemoveFrom(possible, values[0]);
                 }
             }
-
-
+            console.log("block " + blockX + " " + blockY + " possible " + possible + ":");
+            //and with block possibilities
+            for(let x = blockX; x < blockX + 3; x++)
+                for(let y = blockY; y < blockY + 3; y++) {
+                    //console.log("before " + x + " " + y + " " + possibilityMatrix[x][y]);
+                    possibilityMatrix[x][y] = possibleAnd(possibilityMatrix[x][y], possible);
+                    //console.log("after " + x + " " + y + " " + possibilityMatrix[x][y]);
+                }
+                    
+            
         }
     }
 
@@ -82,7 +91,7 @@ function updatePossibilities() {
         for(let y = 0; y < 9; y++) {
             let values = possibilityMatrix[x][y];
             if(values.length == 1) {
-                $("#n" + x + y).val(values[0]);
+                $("#n" + x.toString() + y.toString()).val(values[0]);
             }
         }
     }
@@ -96,7 +105,7 @@ function compute() {
             possibilityMatrix[x] = []
             for(let y = 0; y < 9; y++) {
                 const possible = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-                var text = $("#n" + x + y).val();
+                var text = $("#n" + x.toString() + y.toString()).val();
                 if(text == "")
                     possibilityMatrix[x].push([...possible]);
                 else
@@ -111,15 +120,25 @@ function compute() {
 $(document).ready(function(){
     //alert("awesome");
 
-    alert(possibleAnd([1, 2, 3, 4], [2, 3, 4, 5]));
+    alert(possibleAnd([1, 2, 3], [3, 4, 5, 6, 7]));
 
     var contents = "";
     for(let x = 0; x < 9; x++) {
         contents += "<tr>";
         for(let y = 0; y < 9; y++)
-            contents += "<td><input class='numberinput' max=1 id='n" + x + y + "'></td>";
+            contents += "<td><input class='numberinput' max=1 id='n" + x.toString() + y.toString() + "'></td>";
         contents += "</tr>";
     }
+
+    // var possiblecontents = "";
+    // for(let x = 0; x < 9; x++) {
+    //     possiblecontents += "<tr>";
+    //     for(let y = 0; y < 9; y++)
+    //         possiblecontents += "<td><input class='numberinput' max=1 id='np" + x.toString() + y.toString() + "'></td>";
+    //     possiblecontents += "</tr>";
+    // }
+
     $("#input").append(contents);
+    $("#possible").append(possiblecontents);
     //alert("done");
 });
