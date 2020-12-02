@@ -15,7 +15,10 @@ function possibleAnd(A, B) {
         bitwiseA |= 1 << (A[i] - 1);
 
     for(let i = 0; i < B.length; i++)
-        bitwise &= ~0 & (1 << (B[i] - 1));
+        bitwiseB |= 1 << (B[i] - 1);
+
+    alert(bitwiseA + " " + bitwiseB);
+    var bitwise = bitwiseA & bitwiseB;
     alert(bitwise);
     var ret = [];
     for(let i = 0; i < 9; i++)
