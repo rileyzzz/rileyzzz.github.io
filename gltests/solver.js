@@ -101,6 +101,7 @@ function updatePossibilities() {
 function compute() {
     //setup default property matrix
     if(possibilityMatrix.length == 0) {
+        alert("rebuilding possibility matrix");
         for(let x = 0; x < 9; x++) {
             possibilityMatrix[x] = []
             for(let y = 0; y < 9; y++) {
