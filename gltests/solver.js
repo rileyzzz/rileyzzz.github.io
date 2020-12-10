@@ -11,7 +11,7 @@ function output(str) {
 }
 
 window.onerror = function(message, source, lineno, colno, error) {
-    this.output("ERROR: " + message + " " + error + " from " + source + " line: " + lineno + " col: " + colno);
+    this.output("ERROR: " + message + " line: " + lineno + " col: " + colno);
 };
 
 function RemoveFrom(arr, val) {
@@ -44,15 +44,19 @@ function updatePossibilities() {
     var clears = [];
 
     //alert("finding");
-    for(let y = 0; y < 9; x++) {
-        for(let x = 0; x < 9; y++) {
+
+    //verified
+    for(let y = 0; y < 9; y++) {
+        for(let x = 0; x < 9; x++) {
             let values = possibilityMatrix[x][y];
+            //output("values " + x + " " + y + ": " + values);
             if(values.length == 1) {
                 clears.push([x, y, values[0]]);
             }
         }
     }
-    output("CLEARS: " + clears);
+    
+    //output("CLEARS: " + clears);
     //alert("clearing");
     for(let i = 0; i < clears.length; i++) {
         let clear = clears[i];
@@ -66,6 +70,9 @@ function updatePossibilities() {
                 RemoveFrom(possibilityMatrix[x][clearY], val);
         }
 
+        //for(let x = 0; x < 9; x++)
+            //output("clear row " + x + ": " + possibilityMatrix[x][clearY]);
+
         for(let y = 0; y < 9; y++) {
             if(y != clearY)
                 RemoveFrom(possibilityMatrix[clearX][y], val);
@@ -74,6 +81,7 @@ function updatePossibilities() {
 
     for(let blockY = 0; blockY < 9; blockY += 3) {
         for(let blockX = 0; blockX < 9; blockX += 3) {
+            output("block " + blockX / 3 + " " + blockY / 3 + ": ");
             let possible = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
             for(let y = blockY; y < blockY + 3; y++) {
@@ -83,16 +91,40 @@ function updatePossibilities() {
                         RemoveFrom(possible, values[0]);
                 }
             }
-            output("block " + blockX + " " + blockY + " possible " + possible + ":");
+
+            output("possible: " + possible);
+
             //and with block possibilities
             for(let y = blockY; y < blockY + 3; y++)
                 for(let x = blockX; x < blockX + 3; x++) {
+                    let values = possibilityMatrix[x][y];
+                    if(values.length != 1)
+                        possibilityMatrix[x][y] = possibleAnd(values, possible);
                     //console.log("before " + x + " " + y + " " + possibilityMatrix[x][y]);
-                    possibilityMatrix[x][y] = possibleAnd(possibilityMatrix[x][y], possible);
                     //console.log("after " + x + " " + y + " " + possibilityMatrix[x][y]);
                 }
                     
+            //per number tallies
+            let numberTallies = [];
+            for(let i = 0; i < 9; i++) {
+                numberTallies[i] = [];
+
+                for(let x = 0; x < 3; x++)
+                    numberTallies[i][x] = [];
+                
+                for(let y = 0; y < 3; y++)
+                    for(let x = 0; x < 3; x++)
+                        numberTallies[i][x][y] = true;
+            }
             
+            for(let y = blockY; y < blockY + 3; y++) {
+                for(let x = blockX; x < blockX + 3; x++) {
+                    let possible = possibilityMatrix[x][y];
+                    //for each possibility, tally
+                    for(let i = 0; i < possible.length; i++)
+                        numberTallies[possible[i] - 1][x][y] = false;
+                }
+            }
         }
     }
 
@@ -100,8 +132,8 @@ function updatePossibilities() {
 
     //alert("setting");
     //update display
-    for(let x = 0; x < 9; x++) {
-        for(let y = 0; y < 9; y++) {
+    for(let y = 0; y < 9; y++) {
+        for(let x = 0; x < 9; x++) {
             let values = possibilityMatrix[x][y];
             if(values.length == 1) {
                 $("#n" + x.toString() + y.toString()).val(values[0]);
@@ -116,16 +148,20 @@ function compute() {
     //setup default property matrix
     if(possibilityMatrix.length == 0) {
         output("rebuilding possibility matrix");
-        for(let x = 0; x < 9; x++) {
+        for(let x = 0; x < 9; x++)
             possibilityMatrix[x] = []
-            for(let y = 0; y < 9; y++) {
+        
+        for(let y = 0; y < 9; y++) {
+            for(let x = 0; x < 9; x++) {
                 const possible = [1, 2, 3, 4, 5, 6, 7, 8, 9];
                 var text = $("#n" + x.toString() + y.toString()).val();
                 if(text == "")
                     possibilityMatrix[x].push([...possible]);
                 else
                     possibilityMatrix[x].push([parseInt(text)]);
+
             }
+            //output("matrix update " + possibilityMatrix[x]);
         }
     }
     output("begin update");
@@ -138,9 +174,9 @@ $(document).ready(function(){
     //output(possibleAnd([1, 2, 3], [3, 4, 5, 6, 7]));
 
     var contents = "";
-    for(let x = 0; x < 9; x++) {
+    for(let y = 0; y < 9; y++) {
         contents += "<tr>";
-        for(let y = 0; y < 9; y++)
+        for(let x = 0; x < 9; x++)
             contents += "<td><input class='numberinput' max=1 id='n" + x.toString() + y.toString() + "'></td>";
         contents += "</tr>";
     }
