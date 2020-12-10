@@ -107,14 +107,14 @@ function updatePossibilities() {
             //per number tallies
             let numberTallies = [];
             for(let i = 0; i < 9; i++) {
-                numberTallies[i] = [];
+                numberTallies.push([]);
 
                 for(let x = 0; x < 3; x++)
                     numberTallies[i][x] = [];
                 
                 for(let y = 0; y < 3; y++)
                     for(let x = 0; x < 3; x++)
-                        numberTallies[i][x][y] = true;
+                        numberTallies[i][x][y] = false;
             }
             
             for(let y = blockY; y < blockY + 3; y++) {
@@ -122,7 +122,33 @@ function updatePossibilities() {
                     let possible = possibilityMatrix[x][y];
                     //for each possibility, tally
                     for(let i = 0; i < possible.length; i++)
-                        numberTallies[possible[i] - 1][x][y] = false;
+                        numberTallies[possible[i] - 1][x - blockX][y - blockY] = true;
+                }
+            }
+
+            for(let i = 0; i < 9; i++) {
+                //tally for each number
+                let tally = numberTallies[i];
+                let count = 0;
+                let flatTally = [];
+                //output("number " + (i + 1) + ": ");
+                
+                for(let y = 0; y < 3; y++) {
+                    for(let x = 0; x < 3; x++) {
+                        //output(x + " " + y + ": " + numberTallies[i][x][y]);
+                        if(numberTallies[i][x][y] == true) {
+                            count += tally[x][y];
+                            flatTally.push([x, y]);
+                        }
+                    }
+                }
+                
+                if(count == 1) {
+                    output("Single tally possibility.");
+                    let location = flatTally[0];
+                    let valX = location[0] + blockX;
+                    let valY = location[1] + blockY;
+                    possibilityMatrix[valX][valY] = [i + 1];
                 }
             }
         }
